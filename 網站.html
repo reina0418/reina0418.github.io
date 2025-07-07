@@ -1,349 +1,138 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>超炫星空互動網頁</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-  html, body {
-    margin: 0; padding: 0; height: 100%; overflow-x: hidden;
-    background: radial-gradient(ellipse at center, #000011 0%, #000000 100%);
-    font-family: 'Orbitron', monospace;
-    color: #0ff;
-    user-select: none;
-  }
-  #canvas-bg {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 0;
-    background: #000011;
-    display: block;
-  }
-  .container {
-    position: relative;
-    z-index: 10;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 3rem 2rem 6rem;
-  }
-  h1 {
-    font-size: 3.5rem;
-    margin-bottom: 0.5rem;
-    color: #0ff;
-    text-align: center;
-    text-shadow:
-      0 0 10px #0ff,
-      0 0 30px #0ff,
-      0 0 60px #0ff,
-      0 0 90px #0ff;
-    animation: neonGlow 3s ease-in-out infinite alternate;
-  }
-  @keyframes neonGlow {
-    0%, 100% {
-      text-shadow:
-        0 0 10px #0ff,
-        0 0 30px #0ff,
-        0 0 60px #0ff,
-        0 0 90px #0ff;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>聊天系統</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    50% {
-      text-shadow:
-        0 0 20px #33ffff,
-        0 0 40px #33ffff,
-        0 0 80px #33ffff,
-        0 0 120px #33ffff;
-      color: #33ffff;
+
+    html, body {
+      height: 100%;
+      font-family: 'Orbitron', sans-serif;
+      background: radial-gradient(ellipse at center, #000015 0%, #000000 100%);
+      overflow: hidden;
+      color: #00eaff;
     }
-  }
-  .subtitle {
-    font-size: 1.6rem;
-    color: #66ffff;
-    text-align: center;
-    margin-bottom: 2rem;
-    font-weight: 600;
-  }
-  .typing {
-    font-size: 1.4rem;
-    white-space: nowrap;
-    border-right: 4px solid #0ff;
-    overflow: hidden;
-    width: 0;
-    margin: 0 auto;
-    max-width: 600px;
-    animation: typing 4s steps(40, end) forwards, blinkCaret 0.75s step-end infinite;
-  }
-  @keyframes typing {
-    to {
+
+    canvas#bgCanvas {
+      position: fixed;
+      z-index: -1;
       width: 100%;
+      height: 100%;
     }
-  }
-  @keyframes blinkCaret {
-    50% {
-      border-color: transparent;
+
+    .center-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      animation: fadeIn 2s ease-in-out;
     }
-  }
-  button {
-    display: block;
-    margin: 3rem auto 0;
-    background: linear-gradient(45deg, #00ffff, #33ffff);
-    border: none;
-    padding: 1.2rem 3rem;
-    font-size: 1.3rem;
-    color: #000;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow:
-      0 0 15px #00ffff,
-      0 0 40px #00ffff,
-      0 0 80px #33ffff;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    font-weight: 700;
-  }
-  button::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.4), transparent);
-    transform: rotate(45deg);
-    transition: all 0.5s ease;
-    pointer-events: none;
-  }
-  button:hover {
-    box-shadow:
-      0 0 25px #33ffff,
-      0 0 60px #33ffff,
-      0 0 120px #00ffff;
-    transform: scale(1.1);
-  }
-  button:hover::before {
-    left: 100%;
-    transition: all 0.5s ease;
-  }
-  #particles-explode {
-    position: fixed;
-    pointer-events: none;
-    top: 0; left: 0; width: 100%; height: 100%;
-    z-index: 15;
-  }
-  section {
-    min-height: 100vh;
-    padding: 5rem 2rem;
-    border-bottom: 1px solid #003344;
-    position: relative;
-    overflow: hidden;
-  }
-  section:nth-child(odd) {
-    background: rgba(0, 25, 40, 0.75);
-  }
-  section:nth-child(even) {
-    background: rgba(0, 35, 60, 0.75);
-  }
-  .section-title {
-    font-size: 2.2rem;
-    margin-bottom: 1rem;
-    color: #0ff;
-    text-shadow: 0 0 8px #0ff;
-    text-align: center;
-  }
-  .section-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    max-width: 750px;
-    margin: 0 auto;
-    color: #88ffff;
-    text-align: center;
-  }
-</style>
+
+    h1 {
+      font-size: 3rem;
+      letter-spacing: 2px;
+      color: #00f6ff;
+      text-shadow: 0 0 20px #00f6ff88;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 15px 30px;
+      font-size: 1.2rem;
+      background: linear-gradient(45deg, #00f6ff, #00c3ff);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 0 20px #00f6ff88;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      background: linear-gradient(45deg, #00c3ff, #00f6ff);
+      box-shadow: 0 0 30px #00f6ffcc;
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .btn {
+        font-size: 1rem;
+        padding: 12px 20px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <canvas id="bgCanvas"></canvas>
+  <div class="center-box">
+    <h1>未來科技系統</h1>
+    <a class="btn" href="login.html">進入平台</a>
+  </div>
 
-<canvas id="canvas-bg"></canvas>
+  <script>
+    const socket = io();
+    const canvas = document.getElementById("bgCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-<div class="container">
-  <h1>Reina0418 的超炫星空網站</h1>
-  <p class="subtitle">音樂像風一樣自由流動，在空中飄蕩</p>
-  <p class="typing" id="typing-text">歡迎來到我的個人網站，感受星空與音樂的共鳴...</p>
-  
-  <button id="explode-btn">點擊產生炫酷粒子爆炸</button>
-  
-  <section>
-    <h2 class="section-title">關於我</h2>
-    <p class="section-content">
-      我是 Reina，喜歡音樂和星空，透過這個網站分享我的熱情與創作。
-    </p>
-  </section>
-  <section>
-    <h2 class="section-title">我的作品</h2>
-    <p class="section-content">
-      這裡展示我最近的音樂專案、視覺設計和程式碼實驗，歡迎瀏覽與交流。
-    </p>
-  </section>
-  <section>
-    <h2 class="section-title">聯絡我</h2>
-    <p class="section-content">
-      想了解更多或合作，請透過社群媒體與我聯繫。
-    </p>
-  </section>
-</div>
+    let particles = [];
 
-<div id="particles-explode"></div>
-
-<script>
-const canvas = document.getElementById('canvas-bg');
-const ctx = canvas.getContext('2d');
-let W, H;
-let stars = [];
-const maxStars = 250;
-let mouseX = null;
-let mouseY = null;
-
-// Nebula 背景漸層及光暈函式
-function drawNebula(ctx, W, H) {
-  let gradient = ctx.createRadialGradient(W*0.3, H*0.7, 100, W*0.3, H*0.7, 400);
-  gradient.addColorStop(0, 'rgba(0,255,255,0.15)');
-  gradient.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, W, H);
-
-  gradient = ctx.createRadialGradient(W*0.7, H*0.3, 50, W*0.7, H*0.3, 350);
-  gradient.addColorStop(0, 'rgba(100,255,255,0.1)');
-  gradient.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, W, H);
-}
-
-// 星星類別
-class Star {
-  constructor(){
-    this.x = Math.random() * W;
-    this.y = Math.random() * H;
-    this.size = Math.random() * 1.4 + 0.2;
-    this.baseSize = this.size;
-    this.twinkle = Math.random() * 0.05 + 0.005;
-    this.brightness = Math.random();
-    this.speed = (Math.random() - 0.5) * 0.03;
-  }
-  update() {
-    // 緩慢左右移動
-    this.x += this.speed;
-    if (this.x > W) this.x = 0;
-    else if (this.x < 0) this.x = W;
-    // 閃爍變化
-    this.brightness += this.twinkle;
-    if (this.brightness >= 1 || this.brightness <= 0) this.twinkle *= -1;
-    this.size = this.baseSize * (0.7 + this.brightness*0.6);
-  }
-  draw() {
-    ctx.beginPath();
-    ctx.shadowColor = '#0ff';
-    ctx.shadowBlur = 5;
-    ctx.fillStyle = `rgba(0,255,255,${this.brightness.toFixed(2)})`;
-    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
-    ctx.fill();
-  }
-}
-
-function init() {
-  W = window.innerWidth;
-  H = window.innerHeight;
-  canvas.width = W;
-  canvas.height = H;
-  stars = [];
-  for(let i=0; i<maxStars; i++) {
-    stars.push(new Star());
-  }
-}
-function animate() {
-  ctx.clearRect(0, 0, W, H);
-  // Nebula 背景
-  drawNebula(ctx, W, H);
-
-  stars.forEach(star => {
-    star.update();
-    star.draw();
-  });
-
-  // 鼠標吸附效果
-  if(mouseX !== null && mouseY !== null) {
-    stars.forEach(star => {
-      let dx = mouseX - star.x;
-      let dy = mouseY - star.y;
-      let dist = Math.sqrt(dx*dx + dy*dy);
-      if(dist < 120) {
-        star.x += dx * 0.05;
-        star.y += dy * 0.05;
-      }
-    });
-  }
-
-  requestAnimationFrame(animate);
-}
-window.addEventListener('resize', init);
-window.addEventListener('mousemove', e => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
-init();
-animate();
-
-// 粒子爆炸效果
-const explodeContainer = document.getElementById('particles-explode');
-
-function createExplosion(x, y) {
-  const count = 50;
-  for(let i=0; i<count; i++) {
-    let div = document.createElement('div');
-    div.style.position = 'fixed';
-    div.style.left = x + 'px';
-    div.style.top = y + 'px';
-    div.style.width = '6px';
-    div.style.height = '6px';
-    div.style.borderRadius = '50%';
-    div.style.background = `hsl(${Math.random()*360}, 100%, 60%)`;
-    div.style.boxShadow = '0 0 10px rgba(255,255,255,0.8)';
-    explodeContainer.appendChild(div);
-
-    let angle = Math.random() * 2 * Math.PI;
-    let speed = Math.random() * 8 + 3;
-    let vx = Math.cos(angle) * speed;
-    let vy = Math.sin(angle) * speed;
-
-    let lifetime = 40 + Math.random() * 20;
-    let frame = 0;
-
-    function move() {
-      if(frame < lifetime) {
-        vx *= 0.91;
-        vy *= 0.91;
-        vy += 0.3;
-
-        let curX = parseFloat(div.style.left);
-        let curY = parseFloat(div.style.top);
-
-        div.style.left = (curX + vx) + 'px';
-        div.style.top = (curY + vy) + 'px';
-        div.style.opacity = 1 - frame / lifetime;
-        div.style.transform = `scale(${1 - frame/lifetime})`;
-
-        frame++;
-        requestAnimationFrame(move);
-      } else {
-        explodeContainer.removeChild(div);
-      }
+    for (let i = 0; i < 90; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 1.5,
+        vy: (Math.random() - 0.5) * 1.5,
+        radius: Math.random() * 2 + 1
+      });
     }
-    move();
-  }
-}
 
-document.getElementById('explode-btn').addEventListener('click', e => {
-  createExplosion(e.clientX, e.clientY);
-});
-</script>
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,20,0.3)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#00f6ff";
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#00f6ff";
+        ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
 </body>
 </html>
